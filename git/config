@@ -1,0 +1,12 @@
+[user]
+	email = fedor.sakharov@gmail.com
+	name = Fedor Sakharov
+	signingKey = 93D436E666BF0FEE
+[commit]
+	gpgsign = true
+[gpg]
+	program = gpg2
+[core]
+    pager = delta --theme=base16 --width=variable
+[interactive]
+    diffFilter = delta --theme=base16 --width=variable

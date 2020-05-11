@@ -1,0 +1,9 @@
+/*
+!/git/
+
+!/nvim/
+/nvim/plugged/
+/nvim/autoload/
+
+!/alacritty/
+!.gitignore
