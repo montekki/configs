@@ -60,7 +60,7 @@ call plug#end()
 "
 set termguicolors
 set background=dark
-colorscheme base16-eighties
+colorscheme base16-mexico-light
 hi Normal ctermbg=NONE
 syntax on
 

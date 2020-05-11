@@ -7,6 +7,6 @@
 [gpg]
 	program = gpg2
 [core]
-    pager = delta --theme=base16 --width=variable
+    pager = delta --light --width=variable
 [interactive]
-    diffFilter = delta --theme=base16 --width=variable
+    diffFilter = delta --light --width=variable
