@@ -303,3 +303,15 @@ vnoremap j gj
 vnoremap k gk
 noremap  <buffer> <silent> <Up>   gk
 noremap  <buffer> <silent> <Down> gj
+
+
+" =============================================================================
+" # Watch changes to config and reaload
+" =============================================================================
+
+if has ('autocmd')
+ augroup vimrc
+    autocmd! BufWritePost $MYVIMRC source % | echom "Reloaded " . $MYVIMRC | redraw
+    autocmd! BufWritePost $MYGVIMRC if has('gui_running') | so % | echom "Reloaded " . $MYGVIMRC | endif | redraw
+  augroup END
+endif
