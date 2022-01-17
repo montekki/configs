@@ -42,6 +42,10 @@ Plug 'ray-x/lsp_signature.nvim'
 " Only because nvim-cmp _requires_ snippets
 Plug 'hrsh7th/cmp-vsnip', {'branch': 'main'}
 Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
+
+" Add some colors and icons to nvim-cmp.
+Plug 'onsails/lspkind-nvim'
 
 " Syntatic lauguage support
 Plug 'cespare/vim-toml'
@@ -51,6 +55,8 @@ Plug 'rhysd/vim-clang-format'
 Plug 'plasticboy/vim-markdown'
 Plug 'dag/vim-fish'
 
+" Indentlines to see visual tabs/spaces.
+Plug 'yggdroot/indentline'
 call plug#end()
 " Colors
 "
@@ -97,6 +103,7 @@ local on_attach = function(client, bufnr)
   })
 end
 
+local lspkind = require'lspkind'
 local cmp = require'cmp'
 
 cmp.setup({
@@ -114,14 +121,30 @@ cmp.setup({
       i = cmp.mapping.abort(),
       c = cmp.mapping.close(),
     }),
-    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    ['<Tab>'] = cmp.mapping.confirm({ select = true }),
   },
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
     { name = 'vsnip' },
   }, {
     { name = 'buffer' },
-  })
+  }),
+  formatting = {
+    format = lspkind.cmp_format {
+      with_text = true,
+      menu = {
+	buffer = "[buf]",
+	nvim_lsp = "[LSP]",
+	nvim_lua = "[api]",
+	path = "[path]",
+	luasnip = "[snip]",
+      },
+    },
+  },
+  experimental = {
+    native_menu = false,
+    ghost_text = true,
+  },
 })
 
 -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
@@ -301,6 +324,33 @@ set undodir=~/.vimundo
 set undofile
 
 " =============================================================================
+" # Snippets
+" =============================================================================
+"
+" NOTE: You can use other key to expand snippet.
+
+" Expand
+" imap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
+" smap <expr> <C-j>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-j>'
+
+" Expand or jump
+" imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+" smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+
+" Jump forward or backward
+imap <expr> <C-l>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+" smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+" imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+" smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+
+" Select or cut text to use as $TM_SELECTED_TEXT in the next snippet.
+" See https://github.com/hrsh7th/vim-vsnip/pull/50
+nmap        s   <Plug>(vsnip-select-text)
+xmap        s   <Plug>(vsnip-select-text)
+nmap        S   <Plug>(vsnip-cut-text)
+xmap        S   <Plug>(vsnip-cut-text)
+
+" =============================================================================
 " # GUI settings
 " =============================================================================
 
@@ -342,22 +392,21 @@ nmap <leader>r :RainbowToggle<CR>
 
 " =============================================================================
 
-let g:fzf_layout = { 'down': '~30%' }
+let g:fzf_preview_window = ['up:70%', 'ctrl-/']
+let g:fzf_layout = { 'window': 'enew' }
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --color=always --ignore-file /home/theodor/.config/nvim/rg.ignore '.shellescape(<q-args>), 1,
-  \   <bang>0 ? fzf#vim#with_preview('up:60%')
-  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \   <bang>0)
+  \   'rg --column --line-number --no-heading --color=always --ignore-file /home/theodor/.config/nvim/rg.ignore '.shellescape(<q-args>).strpart(0, 25), 1,
+  \   fzf#vim#with_preview(), <bang>0)
 
 function! s:list_cmd()
   let base = fnamemodify(expand('%'), ':h:.:S')
-  return base == '.' ? 'fd --type file --follow' : printf('fd --type file --follow | proximity-sort %s', shellescape(expand('%')))
+  return base == '.' ? 'fd --type file --follow' : printf('fd --type file --follow | proximity-sort %s', shellescape(expand('%')).strpart(0, 25))
 endfunction
 
 command! -bang -nargs=? -complete=dir Files
-  \ call fzf#vim#files(<q-args>, {'source': s:list_cmd(),
-  \                               'options': '--tiebreak=index'}, <bang>0)
+  \ call fzf#vim#files(<q-args>, fzf#vim#with_preview({'source': s:list_cmd(),
+  \                               'options': '--tiebreak=index'}), <bang>0)
 
 " =============================================================================
 " # Errors bindings
