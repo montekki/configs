@@ -17,7 +17,9 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'justinmk/vim-sneak'
 
 " GUI enhancements
-Plug 'itchyny/lightline.vim'
+Plug 'nvim-lualine/lualine.nvim'
+" If you want to have icons in your statusline choose one of these
+Plug 'kyazdani42/nvim-web-devicons'
 Plug 'luochen1990/rainbow'
 Plug 'machakann/vim-highlightedyank'
 Plug 'andymass/vim-matchup'
@@ -35,6 +37,7 @@ Plug 'nvim-lua/lsp_extensions.nvim'
 
 Plug 'hrsh7th/cmp-nvim-lsp', {'branch': 'main'}
 Plug 'hrsh7th/cmp-buffer', {'branch': 'main'}
+Plug 'hrsh7th/cmp-cmdline', {'branch': 'main'}
 Plug 'hrsh7th/cmp-path', {'branch': 'main'}
 Plug 'hrsh7th/nvim-cmp', {'branch': 'main'}
 Plug 'ray-x/lsp_signature.nvim'
@@ -142,7 +145,7 @@ cmp.setup({
     },
   },
   experimental = {
-    native_menu = false,
+    -- native_menu = false,
     ghost_text = true,
   },
 })
@@ -222,6 +225,8 @@ vim.lsp.handlers["testDocument/publishDiagnostics"] = vim.lsp.with(
 	update_in_insert = true,
   }
 )
+
+require('lualine').setup()
 END
 
 " inlay hints don't work for some reason.
@@ -280,13 +285,11 @@ nmap <leader>w :w<CR>
 
 " Rust
 
-" let g:rustfmt_autosave = 1
+let g:rustfmt_autosave = 1
 " let g:rustfmt_emit_files = 1
 " let g:rustfmt_fail_silently = 1
 " let g:rustfmt_options = "--edition 2018"
 " let g: rust_clip_command = 'xclip -selection clipboard'
-
-" let $RUST_SRC_PATH = systemlist("rustc --print sysroot")[0] . "/lib/rustlib/src/rust/src"
 
 "au FileType rust set tabstop=4 shiftwidth=4 expandtab
 au FileType rust set tabstop=4 shiftwidth=4 expandtab
@@ -297,8 +300,6 @@ au FileType rust set tabstop=4 shiftwidth=4 expandtab
 " noinsert: Do not insert test until a selection is made
 " noselect: Do not select, force user to select one from menu
 set completeopt=noinsert,menuone,noselect
-" Better display for messages
-set cmdheight=2
 " You will have bad experience for diagnostic messages when it's default 4000.
 set updatetime=300
 
