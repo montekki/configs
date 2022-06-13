@@ -9,11 +9,11 @@ set nocompatible
 filetype off
 " set rtp+=~/github.com/base16/templates/vim/
 
-call plug#begin('~/.local/share/nvim/plugged')
+call plug#begin('~/.config/nvim/plugged')
 
 " VIM enhancements
 Plug 'ciaranm/securemodelines'
-Plug 'editorconfig/editorconfig-vim'
+" Plug 'editorconfig/editorconfig-vim'
 Plug 'justinmk/vim-sneak'
 
 " GUI enhancements
@@ -57,6 +57,8 @@ Plug 'rust-lang/rust.vim'
 Plug 'rhysd/vim-clang-format'
 Plug 'plasticboy/vim-markdown'
 Plug 'dag/vim-fish'
+Plug 'lervag/vimtex'
+Plug 'udalov/kotlin-vim'
 
 " Indentlines to see visual tabs/spaces.
 Plug 'yggdroot/indentline'
@@ -91,10 +93,10 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<space>r', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   buf_set_keymap('n', '<space>a', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  buf_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
+  buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.set_loclist()<CR>', opts)
   buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 
   -- Get signatures (and _only_ signatures) when in argument lists.
@@ -116,8 +118,14 @@ cmp.setup({
     end,
   },
   mapping = {
+    -- Navigate suggestions
+    ["<C-n>"] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert },
+    ["<C-p>"] = cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Insert },
+
+    -- Navigate the docs being shown for a selected suggestion
     ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
     ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+
     ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
     ['<C-y>'] = cmp.config.disable,
     ['<C-e>'] = cmp.mapping({
@@ -136,16 +144,16 @@ cmp.setup({
     format = lspkind.cmp_format {
       with_text = true,
       menu = {
-	buffer = "[buf]",
-	nvim_lsp = "[LSP]",
-	nvim_lua = "[api]",
-	path = "[path]",
-	luasnip = "[snip]",
+        buffer = "[buf]",
+        nvim_lsp = "[LSP]",
+        nvim_lua = "[api]",
+        -- path = "[path]",
+        luasnip = "[snip]",
       },
     },
   },
   experimental = {
-    -- native_menu = false,
+    native_menu = false,
     ghost_text = true,
   },
 })
@@ -174,6 +182,9 @@ require('lspconfig')['rust_analyzer'].setup {
   flags = {
     debounce_text_changes = 150,
   },
+  cmd = {
+    "ra-multiplex"
+  },
   settings = {
     ["rust-analyzer"] = {
       cargo = {
@@ -184,53 +195,19 @@ require('lspconfig')['rust_analyzer'].setup {
   capabilities = capabilities
 }
 
-local function goto_definition(split_cmd)
-  local util = vim.lsp.util
-  local log = require("vim.lsp.log")
-  local api = vim.api
-
-  -- note, this handler style is for neovim 0.5.1/0.6, if on 0.5, call with function(_, method, result)
-  local handler = function(_, result, ctx)
-    if result == nil or vim.tbl_isempty(result) then
-      local _ = log.info() and log.info(ctx.method, "No location found")
-      return nil
-    end
-
-    if split_cmd then
-      vim.cmd(split_cmd)
-    end
-
-    if vim.tbl_islist(result) then
-      util.jump_to_location(result[1])
-
-      if #result > 1 then
-        util.set_qflist(util.locations_to_items(result))
-        api.nvim_command("copen")
-        api.nvim_command("wincmd p")
-      end
-    else
-      util.jump_to_location(result)
-    end
-  end
-
-  return handler
-end
-
-vim.lsp.handlers["textDocument/definition"] = goto_definition('split')
-
-vim.lsp.handlers["testDocument/publishDiagnostics"] = vim.lsp.with(
-  vim.lsp.diagnostic.on_publish_diagnostics, {
-    virtual_text = true,
-	signs = true,
-	update_in_insert = true,
-  }
-)
+-- vim.lsp.callbacks["testDocument/publishDiagnostics"] = vim.lsp.with(
+-- vim.lsp.diagnostic.on_publish_diagnostics, {
+--   virtual_text = true,
+--	signs = true,
+--	update_in_insert = true,
+--   }
+-- )
 
 require('lualine').setup()
 END
 
 " inlay hints don't work for some reason.
-autocmd CursorHold,CursorHoldI *.rs :lua require'lsp_extensions'.inlay_hints{ only_current_line = true }
+" autocmd CursorHold,CursorHoldI *.rs :lua require'lsp_extensions'.inlay_hints{ only_current_line = true }
 
 " Completion
 " Disable rainbow brackets by default
@@ -291,8 +268,19 @@ let g:rustfmt_autosave = 1
 " let g:rustfmt_options = "--edition 2018"
 " let g: rust_clip_command = 'xclip -selection clipboard'
 
-"au FileType rust set tabstop=4 shiftwidth=4 expandtab
-au FileType rust set tabstop=4 shiftwidth=4 expandtab
+
+au FileType rust set tabstop=4 shiftwidth=4 softtabstop=4 expandtab
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set expandtab
+set smartindent
+
+
+filetype plugin indent on
+
+
+" let g:rust_recommended_style = 1
 
 " Completion
 " Better completion
@@ -303,12 +291,10 @@ set completeopt=noinsert,menuone,noselect
 " You will have bad experience for diagnostic messages when it's default 4000.
 set updatetime=300
 
-let g:rust_recommended_style = 0
 
 " =============================================================================
 " # Editor settings
 " =============================================================================
-filetype plugin indent on
 "set autoindent
 set encoding=utf-8
 set scrolloff=2
@@ -480,3 +466,12 @@ endif
 set lcs+=space:·
 nmap <F3> :set invlist<CR>
 imap <F3> <ESC>:set invlist<CR>a
+
+" =============================================================================
+" # LaTeX configuration.
+" =============================================================================
+let g:tex_flavor='latex'
+let g:vimtex_view_method='zathura'
+let g:vimtex_quickfix_mode=0
+set conceallevel=2
+let g:tex_conceal='abdmg'
