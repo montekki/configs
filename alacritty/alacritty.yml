@@ -84,7 +84,7 @@ scrolling:
   # to allow mouse scrolling for applications like `man`.
   #
   # Specifying `0` will disable faux scrolling.
-  faux_multiplier: 3
+  # faux_multiplier: 3
 
   # Scroll to the bottom when new text is written to the terminal.
   auto_scroll: false
@@ -108,7 +108,7 @@ font:
     #   - (macOS) Menlo
     #   - (Linux) monospace
     #   - (Windows) Consolas
-    family: "Iosevka Term SS04 Semibold"
+    family: "JetBrainsMono Nerd Font"
 
     # The `style` can be specified to pick a specific face.
     style: Regular
@@ -119,7 +119,7 @@ font:
     #
     # If the bold family is not specified, it will fall back to the
     # value specified for the normal font.
-    family: "Iosevka Term SS04 Semibold"
+    family: "JetBrainsMono Nerd Font"
 
     # The `style` can be specified to pick a specific face.
     style: Bold
@@ -136,7 +136,7 @@ font:
     #style: Italic
 
   # Point size
-  size: 7.5
+  size: 16.0
 
   # Offset is the extra space around each character. `offset.y` can be thought of
   # as modifying the line spacing, and `offset.x` as modifying the letter spacing.
@@ -228,12 +228,6 @@ visual_bell:
   duration: 0
   color: '0xffffff'
 
-# Background opacity
-#
-# Window opacity as a floating point number from `0.0` to `1.0`.
-# The value `0.0` is completely transparent and `1.0` is opaque.
-background_opacity: 1.0
-
 # Mouse bindings
 #
 # Available fields:
@@ -263,28 +257,6 @@ mouse:
 
   # If this is `true`, the cursor is temporarily hidden when typing.
   hide_when_typing: false
-
-  url:
-    # URL launcher
-    #
-    # This program is executed when clicking on a text which is recognized as a URL.
-    # The URL is always added to the command as the last parameter.
-    #
-    # When set to `None`, URL launching will be disabled completely.
-    #
-    # Default:
-    #   - (macOS) open
-    #   - (Linux) xdg-open
-    #   - (Windows) explorer
-    #launcher:
-    #  program: xdg-open
-    #  args: []
-
-    # URL modifiers
-    #
-    # These are the modifiers that need to be held down for opening URLs when clicking
-    # on them. The available modifiers are documented in the key binding section.
-    modifiers: None
 
 selection:
   semantic_escape_chars: ",│`|:\"' ()[]{}<>"
@@ -467,8 +439,8 @@ key_bindings:
   #- { key: Insert,   mods: Shift,         action: PasteSelection   }
   #- { key: Key0,     mods: Control,       action: ResetFontSize    }
   #- { key: Equals,   mods: Control,       action: IncreaseFontSize }
-  - { key: Add,      mods: Control,       action: IncreaseFontSize }
-  #- { key: Subtract, mods: Control,       action: DecreaseFontSize }
+  - { key: Plus,      mods: Control,       action: IncreaseFontSize }
+    #- { key: Subtract, mods: Control,       action: DecreaseFontSize }
   - { key: Minus,    mods: Control,       action: DecreaseFontSize }
 
   # (macOS only)
