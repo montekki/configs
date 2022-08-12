@@ -6,4 +6,9 @@
 /nvim/autoload/
 
 !/alacritty/
+
+!/fish
+
+!/tmux
+
 !.gitignore
