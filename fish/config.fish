@@ -44,7 +44,9 @@ setenv LESS_TERMCAP_ue \e'[0m'           # end underline
 setenv LESS_TERMCAP_us \e'[04;38;5;146m' # begin underline
 
 if status --is-interactive
-	tmux ^ /dev/null; and exec true
+    if ! set -q TMUX
+        exec tmux
+    end
 end
 
 #
