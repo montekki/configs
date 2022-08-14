@@ -203,7 +203,9 @@ require('lspconfig')['rust_analyzer'].setup {
 --   }
 -- )
 
-require('lualine').setup()
+require('lualine').setup {
+    options = { theme = 'gruvbox-material' }
+}
 END
 
 " inlay hints don't work for some reason.
@@ -359,8 +361,14 @@ set colorcolumn=100
 " Clipboard integration
 " ,p paste clipboard into buffer
 " ,c copy buffer into clipboard
-noremap <leader>p :read !xsel --clipboard --output<cr>
-noremap <leader>c :w !xsel -ib<cr><cr>
+if has('macunix')
+    noremap <leader>p :read !pbpaste<cr>
+    noremap <leader>c :w !pbcopy<cr><cr>
+else
+    noremap <leader>p :read !xsel --clipboard --output<cr>
+    noremap <leader>c :w !xsel -ib<cr><cr>
+endif
+
 
 " Quick-save
 nmap <leader>w :w<CR>
