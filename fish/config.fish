@@ -8,6 +8,13 @@ set -g IFS \n\ \t
 set -qg __fish_added_user_paths
 or set -g __fish_added_user_paths
 
+# Set OS-specific environment variables
+switch (uname)
+case Darwin
+    setenv DYLD_FALLBACK_LIBRARY_PATH "$(xcode-select --print-path)/Toolchains/XcodeDefault.xctoolchain/usr/lib/"
+case '*'
+end
+
 if command -v exa > /dev/null
 	abbr -a l 'exa'
 	abbr -a ls 'exa'
