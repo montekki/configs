@@ -9,6 +9,8 @@
 
 !/fish
 
+!/starship
+
 !/tmux
 
 !.gitignore
