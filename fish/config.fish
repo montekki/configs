@@ -35,6 +35,31 @@ if command -v cargo > /dev/null
 	abbr -a ct 'cargo test'
 end
 
+if command -v gh > /dev/null
+    and command -v fzf > /dev/null
+
+    function ghpr
+        env GH_FORCE_TTY=100% gh pr list |
+        fzf --ansi --preview 'GH_FORCE_TTY=100% gh pr view {1}' --preview-window down --header-lines 3 |
+        awk '{print $1}' |
+        xargs gh pr checkout
+    end
+
+    function ghissue
+        env GH_FORCE_TTY=100% gh issue list |
+        fzf --ansi --preview 'GH_FORCE_TTY=100% gh issue view {1}' --preview-window down --header-lines 3 |
+        awk '{print $1}' |
+        xargs gh issue view --web
+    end
+
+    function ghrepo
+        env GH_FORCE_TTY=100% gh repo list |
+        fzf --ansi --preview 'GH_FORCE_TTY=100% gh repo view {1}' --preview-window down --header-lines 3 |
+        awk '{print $1}' |
+        xargs gh repo clone
+    end
+end
+
 # Fish git prompt
 set __fish_git_prompt_showuntrackedfiles 'yes'
 set __fish_git_prompt_showdirtystate 'yes'
