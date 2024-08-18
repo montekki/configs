@@ -4,6 +4,7 @@
 #
 # Set default field separators
 #
+alias python=/usr/bin/python3
 set -g IFS \n\ \t
 set -qg __fish_added_user_paths
 or set -g __fish_added_user_paths
@@ -88,7 +89,11 @@ function __fish_default_command_not_found_handler
     printf "fish: Unknown command %s\n" (string escape -- $argv[1]) >&2
 end
 
+setenv ZKSYNC_HOME "$HOME/github.com/matter-labs/zksync-era/"
 setenv PATH "$HOME/local/bin/:$HOME/myprefix/bin:$HOME/myprefix/usr/bin/:$HOME/.cargo/bin/:/snap/bin/:$PATH"
+setenv PATH "$PATH:$ZKSYNC_HOME/bin"
+setenv PATH "$PATH:$HOME/.foundry/bin"
+setenv PATH "$PATH:$HOME/Library/Python/3.9/bin"
 setenv LD_LIBRARY_PATH "$HOME/myprefix/lib:$HOME/myprefix/usr/lib"
 setenv LIBRARY_PATH "$HOME/myprefix/lib:$HOME/myprefix/usr/lib"
 setenv LANG "en_US.UTF-8"
