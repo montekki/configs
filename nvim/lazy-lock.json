@@ -1,0 +1,15 @@
+{
+  "base16-nvim": { "branch": "main", "commit": "c0c2275338339945c656d85f65cded2505e590ce" },
+  "fzf.vim": { "branch": "master", "commit": "c5ce7908ee86af7d4090d2007086444afb6ec1c9" },
+  "lazy.nvim": { "branch": "main", "commit": "48b52b5cfcf8f88ed0aff8fde573a5cc20b1306d" },
+  "lightline.vim": { "branch": "master", "commit": "58c97bc21c6f657d3babdd4eefce7593e30e75ce" },
+  "nvim-lspconfig": { "branch": "master", "commit": "bdbc65aadc708ce528efb22bca5f82a7cca6b54d" },
+  "nvim-treesitter": { "branch": "master", "commit": "00f128dd73086aa578dc3d9142de06c633b7c685" },
+  "rust.vim": { "branch": "master", "commit": "889b9a7515db477f4cb6808bef1769e53493c578" },
+  "stylua-nvim": { "branch": "main", "commit": "ce59a353f02938cba3e0285e662fcd3901cd270f" },
+  "tabular": { "branch": "master", "commit": "12437cd1b53488e24936ec4b091c9324cafee311" },
+  "vim-fish-syntax": { "branch": "master", "commit": "e229becbf4bbee21cc78cd2cf24f57112e33c02a" },
+  "vim-markdown": { "branch": "master", "commit": "a657e697376909c41475a686eeef7fc7a4972d94" },
+  "vim-toml": { "branch": "main", "commit": "d36caa6b1cf508a4df1c691f915572fc02143258" },
+  "yaml.nvim": { "branch": "main", "commit": "615985c1886644a4b2c0eebf985c1d1ae8257dd1" }
+}
