@@ -2,7 +2,7 @@ return {
 	{
 		'junegunn/fzf.vim',
 		dependencies = {
-			{ 'junegunn/fzf', dir = '~/.fzf', build = './install --all' },
+			{ 'junegunn/fzf', build = ":call fzf#install()" },
 		},
 		config = function()
 			-- still show 30% current file for convenience
@@ -28,7 +28,7 @@ return {
 			end
 
 			vim.api.nvim_create_user_command('Files', function(arg)
-				vim.fn['fzf#vim#files'](arg.qargs, { source = list_cmd(), options = '--tiebreak=index' }, arg.bang)
+				vim.fn['fzf#vim#files'](arg.args, { source = list_cmd(), options = '--tiebreak=index' }, arg.bang)
 			end, { bang = true, nargs = '?', complete = "dir" })
 		end
 	}

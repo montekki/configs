@@ -2,11 +2,9 @@ return {
 	{
 		"neovim/nvim-lspconfig",
 		config = function()
-			local lsp_config = require("lspconfig")
-
 			vim.api.nvim_create_augroup("myaugroup", { clear = true })
 
-			lsp_config.lua_ls.setup {
+			vim.lsp.config['luals'] = {
 				on_init = function(client)
 					local path = client.workspace_folders[1].name
 					if vim.uv.fs_stat(path .. "/.luarc.json") or vim.uv.fs_stat(path .. "/.luarc.jsonc") then
@@ -46,33 +44,53 @@ return {
 				end,
 
 				settings = {
-					Lua = {},
+					Lua = {
+						runtime = {
+							version = 'LuaJIT',
+						}
+					},
+					diagnostics = {
+						globals = { 'vim' },
+					},
+					workspace = {
+						library = vim.api.nvim_get_runtime_file("", true),
+						checkThirdParty = false,
+					},
+					telemetry = { enable = false },
 				},
+
+				cmd = { 'lua-language-server' },
+				filetypes = { 'lua' },
 			}
 
-
-			lsp_config.rust_analyzer.setup {
-				flags = {
-					debounce_text_changes = 150,
-				},
-				cmd = {
-					"ra-multiplex"
-				},
+			vim.lsp.config('rust_analyzer', {
 				settings = {
 					["rust-analyzer"] = {
+						cargo = {
+							features = "all",
+						},
+						checkOnSave = {
+							enable = true,
+						},
 						check = {
-							overrideCommand = {
-								"cargo",
-								"clippy",
-								"--message-format=json-diagnostic-rendered-ansi",
-								"--fix",
-								"--allow-dirty"
-							}
+							command = "clippy",
+						},
+						imports = {
+							group = {
+								enable = false,
+							},
+						},
+						completion = {
+							postfix = {
+								enable = false,
+							},
 						},
 					}
 				}
-			}
+			})
+			vim.lsp.enable('rust_analyzer')
 
+			vim.lsp.enable('luals')
 			-- Global mappings.
 			-- See `:help vim.diagnostic.*` for documentation on any of the below functions
 			vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
@@ -111,10 +129,8 @@ return {
 
 					local client = vim.lsp.get_client_by_id(ev.data.client_id)
 
-					-- When https://neovim.io/doc/user/lsp.html#lsp-inlay_hint stabilizes
-					-- *and* there's some way to make it only apply to the current line.
 					-- if client.server_capabilities.inlayHintProvider then
-					--     vim.lsp.inlay_hint(ev.buf, true)
+					-- vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 					-- end
 
 					-- None of this semantics tokens business.
