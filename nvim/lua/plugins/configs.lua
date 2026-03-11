@@ -30,11 +30,7 @@ return {
 			"nvim-treesitter/nvim-treesitter",
 		},
 	},
-	-- jsonnet
-	{
-		"google/vim-jsonnet",
-		ft = { "jsonnet", "libsonnet" },
-	},
+	-- jsonnet treesitter parser
 	{
 		"nvim-treesitter/nvim-treesitter",
 		opts = {
