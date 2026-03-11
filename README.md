@@ -11,6 +11,23 @@ Here is the list of tools I am using:
 * [tmux](https://github.com/tmux/tmux) multiplexer to multiplex stuff within the terminal
 * [fish](https://github.com/fish-shell/fish-shell) as a shell
 
+### Neovim dependencies
+
+* [lua-language-server](https://github.com/LuaLS/lua-language-server) LSP server for Lua
+* [rust-analyzer](https://github.com/rust-lang/rust-analyzer) LSP server for Rust
+* [jsonnet-language-server](https://github.com/grafana/jsonnet-language-server) LSP server for Jsonnet
+* [stylua](https://github.com/JohnnyMorganz/StyLua) Lua code formatter
+* [fd](https://github.com/sharkdp/fd) fast file finder, used by the fzf `:Files` command
+* [proximity-sort](https://github.com/jonhoo/proximity-sort) sorts fzf results by proximity to the current file
+
+### Shell / terminal dependencies
+
+* [fzf](https://github.com/junegunn/fzf) fuzzy finder
+* [bat](https://github.com/sharkdp/bat) syntax-highlighted file viewer, aliased as `cat`
+* [eza](https://github.com/eza-community/eza) modern `ls` replacement, aliased as `ls`
+* [wl-copy](https://github.com/bugaevc/wl-clipboard) Wayland clipboard utility (Linux)
+* [xsel](https://github.com/kfish/xsel) X11 clipboard utility (Linux, used by tmux)
+
 ## Basic usage
 
 All the tools necessary have to be installed on the target platform, be it Linux on MacOS.
