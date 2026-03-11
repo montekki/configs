@@ -90,6 +90,12 @@ return {
 			})
 			vim.lsp.enable('rust_analyzer')
 
+			vim.lsp.config['jsonnet_ls'] = {
+				cmd = { 'jsonnet-language-server', '--lint' },
+				filetypes = { 'jsonnet', 'libsonnet' },
+			}
+			vim.lsp.enable('jsonnet_ls')
+
 			vim.lsp.enable('luals')
 			-- Global mappings.
 			-- See `:help vim.diagnostic.*` for documentation on any of the below functions
