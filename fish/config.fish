@@ -94,6 +94,7 @@ setenv PATH "$HOME/local/bin/:$HOME/myprefix/bin:$HOME/myprefix/usr/bin/:$HOME/.
 setenv PATH "$PATH:$ZKSYNC_HOME/bin"
 setenv PATH "$PATH:$HOME/.foundry/bin"
 setenv PATH "$PATH:$HOME/Library/Python/3.9/bin"
+setenv PATH "$PATH:/Library/TeX/texbin"
 setenv LD_LIBRARY_PATH "$HOME/myprefix/lib:$HOME/myprefix/usr/lib"
 setenv LIBRARY_PATH "$HOME/myprefix/lib:$HOME/myprefix/usr/lib"
 setenv LANG "en_US.UTF-8"
