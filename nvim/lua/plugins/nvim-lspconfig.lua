@@ -96,6 +96,13 @@ return {
 			}
 			vim.lsp.enable('jsonnet_ls')
 
+			vim.lsp.config['circom_lsp'] = {
+				cmd = { 'circom-lsp' },
+				filetypes = { 'circom' },
+				root_markers = { '.git', 'package.json' },
+			}
+			vim.lsp.enable('circom_lsp')
+
 			vim.lsp.enable('luals')
 			-- Global mappings.
 			-- See `:help vim.diagnostic.*` for documentation on any of the below functions
@@ -139,9 +146,10 @@ return {
 					-- vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 					-- end
 
-					-- None of this semantics tokens business.
-					-- https://www.reddit.com/r/neovim/comments/143efmd/is_it_possible_to_disable_treesitter_completely/
-					client.server_capabilities.semanticTokensProvider = nil
+					-- Keep semantic tokens disabled by default, but allow them for Circom.
+					if vim.bo[ev.buf].filetype ~= 'circom' then
+						client.server_capabilities.semanticTokensProvider = nil
+					end
 				end,
 			})
 		end,

@@ -1,6 +1,11 @@
 return {
 	-- fish
 	'khaveesh/vim-fish-syntax',
+	-- circom syntax (works alongside circom-lsp)
+	{
+		'iden3/vim-circom-syntax',
+		ft = { "circom" },
+	},
 	-- markdown
 	{
 		'plasticboy/vim-markdown',
