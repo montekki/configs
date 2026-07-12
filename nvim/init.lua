@@ -53,6 +53,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 vim.keymap.set('n', '<leader>v', '"+p')
 vim.keymap.set('v', '<leader>c', '"+y')
 
+require("config.treesitter_compat").setup()
 require("config.lazy")
 
 

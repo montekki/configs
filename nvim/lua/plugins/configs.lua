@@ -38,9 +38,43 @@ return {
 	-- jsonnet treesitter parser
 	{
 		"nvim-treesitter/nvim-treesitter",
-		opts = {
-			ensure_installed = { "jsonnet" },
-		},
+		build = ":TSUpdate",
+		init = function()
+			vim.api.nvim_create_autocmd("VimEnter", {
+				once = true,
+				callback = function()
+					vim.schedule(function()
+						if vim.fn.exists(":TSInstall") == 2 then
+							local parsers = require("nvim-treesitter.parsers")
+							local required = { "jsonnet", "markdown", "markdown_inline", "rust", "lua", "vimdoc", "query" }
+							local missing = {}
+
+							for _, parser in ipairs(required) do
+								if not parsers.has_parser(parser) then
+									table.insert(missing, parser)
+								end
+							end
+
+							if #missing > 0 then
+								vim.cmd("silent! TSInstall " .. table.concat(missing, " "))
+							end
+						end
+					end)
+				end,
+			})
+		end,
+		opts = function(_, opts)
+			opts = opts or {}
+			opts.ensure_installed = opts.ensure_installed or {}
+			opts.auto_install = true
+			opts.sync_install = false
+
+			for _, parser in ipairs({ "jsonnet", "markdown", "markdown_inline", "rust", "lua", "vimdoc", "query" }) do
+				if not vim.tbl_contains(opts.ensure_installed, parser) then
+					table.insert(opts.ensure_installed, parser)
+				end
+			end
+		end,
 	},
 
 }

@@ -64,15 +64,17 @@ return {
 			}
 
 			vim.lsp.config('rust_analyzer', {
+				cmd = { "rustup", "run", "stable", "rust-analyzer" },
 				settings = {
 					["rust-analyzer"] = {
 						cargo = {
-							features = "all",
+							allTargets = false,
 						},
 						checkOnSave = {
 							enable = true,
 						},
 						check = {
+							allTargets = false,
 							command = "clippy",
 						},
 						imports = {
@@ -116,16 +118,74 @@ return {
 			vim.api.nvim_create_autocmd('LspAttach', {
 				group = vim.api.nvim_create_augroup('UserLspConfig', {}),
 				callback = function(ev)
+					local function use_current_theme_for_hover(win)
+						local bufnr = vim.api.nvim_win_get_buf(win)
+						local normal = vim.api.nvim_get_hl(0, { name = 'Normal', link = false })
+						local float_border = vim.api.nvim_get_hl(0, { name = 'FloatBorder', link = false })
+
+						float_border.bg = normal.bg
+						vim.api.nvim_set_hl(0, 'LspHoverBorder', float_border)
+						vim.wo[win].winhighlight = 'NormalFloat:Normal,FloatBorder:LspHoverBorder'
+
+						vim.bo[bufnr].filetype = 'markdown'
+						vim.bo[bufnr].syntax = 'markdown'
+						pcall(vim.treesitter.start, bufnr, 'markdown')
+					end
+
+					local function lsp_hover()
+						vim.api.nvim_create_autocmd('WinNew', {
+							once = true,
+							callback = function()
+								vim.schedule(function()
+									local hover_win = vim.b[ev.buf].lsp_floating_preview
+									if hover_win and vim.api.nvim_win_is_valid(hover_win) then
+										use_current_theme_for_hover(hover_win)
+									end
+								end)
+							end,
+						})
+
+						vim.lsp.buf.hover({
+							border = 'rounded',
+							close_events = { 'CursorMoved', 'CursorMovedI', 'InsertCharPre' },
+							focusable = true,
+							max_height = math.min(math.floor(vim.o.lines * 0.35), 20),
+							max_width = math.min(math.floor(vim.o.columns * 0.8), 100),
+							wrap = true,
+						})
+					end
+
 					-- Enable completion triggered by <c-x><c-o>
 					vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+					vim.opt.completeopt = { 'menuone', 'noselect', 'popup' }
 
 					-- Buffer local mappings.
 					-- See `:help vim.lsp.*` for documentation on any of the below functions
 					local opts = { buffer = ev.buf }
+					local client = vim.lsp.get_client_by_id(ev.data.client_id)
+
+					if client and client:supports_method('textDocument/completion') then
+						if client.name == 'rust_analyzer' then
+							local trigger_chars = client.server_capabilities.completionProvider.triggerCharacters or {}
+
+							for char in ('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_'):gmatch('.') do
+								if not vim.tbl_contains(trigger_chars, char) then
+									table.insert(trigger_chars, char)
+								end
+							end
+
+							client.server_capabilities.completionProvider.triggerCharacters = trigger_chars
+						end
+
+						vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
+					end
+
 					vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
 					vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-					vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+					vim.keymap.set('n', 'K', lsp_hover, opts)
+					vim.keymap.set('n', '<D-k>', lsp_hover, opts)
 					vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+					vim.keymap.set('i', '<C-Space>', vim.lsp.completion.get, opts)
 					vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
 					vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
 					vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
@@ -140,14 +200,12 @@ return {
 						vim.lsp.buf.format { async = true }
 					end, opts)
 
-					local client = vim.lsp.get_client_by_id(ev.data.client_id)
-
 					-- if client.server_capabilities.inlayHintProvider then
 					-- vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 					-- end
 
 					-- Keep semantic tokens disabled by default, but allow them for Circom.
-					if vim.bo[ev.buf].filetype ~= 'circom' then
+					if client and vim.bo[ev.buf].filetype ~= 'circom' then
 						client.server_capabilities.semanticTokensProvider = nil
 					end
 				end,
