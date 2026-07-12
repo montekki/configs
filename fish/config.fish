@@ -100,6 +100,7 @@ setenv LIBRARY_PATH "$HOME/myprefix/lib:$HOME/myprefix/usr/lib"
 setenv LANG "en_US.UTF-8"
 setenv GPG_TTY (tty)
 setenv EDITOR "nvim"
+fish_add_path "$HOME/.local/state/nix/profiles/profile/bin"
 
 if command -v nvim > /dev/null
 	abbr -a vim 'nvim'

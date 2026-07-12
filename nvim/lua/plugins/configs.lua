@@ -46,7 +46,8 @@ return {
 					vim.schedule(function()
 						if vim.fn.exists(":TSInstall") == 2 then
 							local parsers = require("nvim-treesitter.parsers")
-							local required = { "jsonnet", "markdown", "markdown_inline", "rust", "lua", "vimdoc", "query" }
+							local required = { "jsonnet", "markdown", "markdown_inline", "nix", "rust", "lua", "vimdoc",
+								"query" }
 							local missing = {}
 
 							for _, parser in ipairs(required) do
@@ -69,7 +70,7 @@ return {
 			opts.auto_install = true
 			opts.sync_install = false
 
-			for _, parser in ipairs({ "jsonnet", "markdown", "markdown_inline", "rust", "lua", "vimdoc", "query" }) do
+			for _, parser in ipairs({ "jsonnet", "markdown", "markdown_inline", "nix", "rust", "lua", "vimdoc", "query" }) do
 				if not vim.tbl_contains(opts.ensure_installed, parser) then
 					table.insert(opts.ensure_installed, parser)
 				end

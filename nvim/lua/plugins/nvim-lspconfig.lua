@@ -3,6 +3,16 @@ return {
 		"neovim/nvim-lspconfig",
 		config = function()
 			vim.api.nvim_create_augroup("myaugroup", { clear = true })
+			local function format_on_save(client, bufnr)
+				if client.supports_method("textDocument/formatting") then
+					vim.api.nvim_clear_autocmds({ group = "myaugroup", buffer = bufnr })
+					vim.api.nvim_create_autocmd("BufWritePre", {
+						group = "myaugroup",
+						buffer = bufnr,
+						callback = function() vim.lsp.buf.format() end,
+					})
+				end
+			end
 
 			vim.lsp.config['luals'] = {
 				on_init = function(client)
@@ -32,16 +42,7 @@ return {
 							},
 						})
 				end,
-				on_attach = function(client, bufnr)
-					if client.supports_method("textDocument/formatting") then
-						vim.api.nvim_clear_autocmds({ group = "myaugroup", buffer = bufnr })
-						vim.api.nvim_create_autocmd("BufWritePre", {
-							group = "myaugroup",
-							buffer = bufnr,
-							callback = function() vim.lsp.buf.format() end,
-						})
-					end
-				end,
+				on_attach = format_on_save,
 
 				settings = {
 					Lua = {
@@ -105,6 +106,20 @@ return {
 			}
 			vim.lsp.enable('circom_lsp')
 
+			vim.lsp.config['nixd'] = {
+				cmd = { 'nixd' },
+				filetypes = { 'nix' },
+				root_markers = { 'flake.nix', 'default.nix', 'shell.nix', '.git' },
+				settings = {
+					nixd = {
+						formatting = {
+							command = { 'nixfmt' },
+						},
+					},
+				},
+			}
+			vim.lsp.enable('nixd')
+
 			vim.lsp.enable('luals')
 			-- Global mappings.
 			-- See `:help vim.diagnostic.*` for documentation on any of the below functions
@@ -163,6 +178,16 @@ return {
 					-- See `:help vim.lsp.*` for documentation on any of the below functions
 					local opts = { buffer = ev.buf }
 					local client = vim.lsp.get_client_by_id(ev.data.client_id)
+					if client and client.name == 'nixd' and client:supports_method('textDocument/formatting') then
+						vim.api.nvim_clear_autocmds({ group = 'myaugroup', buffer = ev.buf })
+						vim.api.nvim_create_autocmd('BufWritePre', {
+							group = 'myaugroup',
+							buffer = ev.buf,
+							callback = function()
+								vim.lsp.buf.format({ bufnr = ev.buf, id = client.id })
+							end,
+						})
+					end
 
 					if client and client:supports_method('textDocument/completion') then
 						if client.name == 'rust_analyzer' then
