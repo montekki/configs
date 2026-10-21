@@ -65,15 +65,22 @@ return {
 			}
 
 			vim.lsp.config('rust_analyzer', {
-				cmd = { "rustup", "run", "stable", "rust-analyzer" },
+				cmd = function(dispatchers, config)
+					return vim.lsp.rpc.start(
+						{ vim.fn.expand("~/.cargo/bin/rust-analyzer") },
+						dispatchers,
+						{
+							cwd = config.root_dir,
+							env = config.cmd_env,
+						}
+					)
+				end,
 				settings = {
 					["rust-analyzer"] = {
 						cargo = {
 							allTargets = false,
 						},
-						checkOnSave = {
-							enable = true,
-						},
+						checkOnSave = true,
 						check = {
 							allTargets = false,
 							command = "clippy",

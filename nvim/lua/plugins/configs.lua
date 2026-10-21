@@ -45,13 +45,12 @@ return {
 				callback = function()
 					vim.schedule(function()
 						if vim.fn.exists(":TSInstall") == 2 then
-							local parsers = require("nvim-treesitter.parsers")
 							local required = { "jsonnet", "markdown", "markdown_inline", "nix", "rust", "lua", "vimdoc",
 								"query" }
 							local missing = {}
 
 							for _, parser in ipairs(required) do
-								if not parsers.has_parser(parser) then
+								if not pcall(vim.treesitter.language.add, parser) then
 									table.insert(missing, parser)
 								end
 							end
