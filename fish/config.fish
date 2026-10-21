@@ -1,3 +1,7 @@
+# The following lines were added by Docker Desktop to add commands to your PATH.
+export PATH="$PATH:/Users/fedorsakharov/.docker/bin"
+# End of Docker Desktop section.
+
 # Main file for fish command completions. This file contains various
 # common helper functions for the command completions. All actual
 # completions are located in the completions subdirectory.
@@ -95,12 +99,19 @@ setenv PATH "$PATH:$ZKSYNC_HOME/bin"
 setenv PATH "$PATH:$HOME/.foundry/bin"
 setenv PATH "$PATH:$HOME/Library/Python/3.9/bin"
 setenv PATH "$PATH:/Library/TeX/texbin"
+setenv PATH "$PATH:$HOME/.local/bin/"
+setenv PATH "$PATH:$HOME/.docker/bin"
 setenv LD_LIBRARY_PATH "$HOME/myprefix/lib:$HOME/myprefix/usr/lib"
 setenv LIBRARY_PATH "$HOME/myprefix/lib:$HOME/myprefix/usr/lib"
 setenv LANG "en_US.UTF-8"
 setenv GPG_TTY (tty)
 setenv EDITOR "nvim"
 fish_add_path "$HOME/.local/state/nix/profiles/profile/bin"
+
+if status --is-interactive
+    and command -q mise
+    mise activate fish | source
+end
 
 if command -v nvim > /dev/null
 	abbr -a vim 'nvim'
