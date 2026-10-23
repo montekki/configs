@@ -126,6 +126,13 @@ return {
 				},
 			}
 			vim.lsp.enable('nixd')
+			vim.lsp.config('terraformls', {
+				root_dir = function(bufnr, on_dir)
+					on_dir(vim.fs.root(bufnr, { '.terraform', '.git' })
+						or vim.fs.dirname(vim.api.nvim_buf_get_name(bufnr)))
+				end,
+			})
+			vim.lsp.enable('terraformls')
 
 			vim.lsp.enable('luals')
 			-- Global mappings.
@@ -185,7 +192,8 @@ return {
 					-- See `:help vim.lsp.*` for documentation on any of the below functions
 					local opts = { buffer = ev.buf }
 					local client = vim.lsp.get_client_by_id(ev.data.client_id)
-					if client and client.name == 'nixd' and client:supports_method('textDocument/formatting') then
+					if client and (client.name == 'nixd' or client.name == 'terraformls')
+						and client:supports_method('textDocument/formatting') then
 						vim.api.nvim_clear_autocmds({ group = 'myaugroup', buffer = ev.buf })
 						vim.api.nvim_create_autocmd('BufWritePre', {
 							group = 'myaugroup',

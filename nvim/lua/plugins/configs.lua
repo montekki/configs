@@ -40,13 +40,19 @@ return {
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
 		init = function()
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = { "terraform", "terraform-vars", "hcl" },
+				callback = function(ev)
+					pcall(vim.treesitter.start, ev.buf, "hcl")
+				end,
+			})
 			vim.api.nvim_create_autocmd("VimEnter", {
 				once = true,
 				callback = function()
 					vim.schedule(function()
 						if vim.fn.exists(":TSInstall") == 2 then
 							local required = { "jsonnet", "markdown", "markdown_inline", "nix", "rust", "lua", "vimdoc",
-								"query" }
+								"query", "hcl" }
 							local missing = {}
 
 							for _, parser in ipairs(required) do
@@ -69,7 +75,7 @@ return {
 			opts.auto_install = true
 			opts.sync_install = false
 
-			for _, parser in ipairs({ "jsonnet", "markdown", "markdown_inline", "nix", "rust", "lua", "vimdoc", "query" }) do
+			for _, parser in ipairs({ "jsonnet", "markdown", "markdown_inline", "nix", "rust", "lua", "vimdoc", "query", "hcl" }) do
 				if not vim.tbl_contains(opts.ensure_installed, parser) then
 					table.insert(opts.ensure_installed, parser)
 				end

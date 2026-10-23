@@ -33,6 +33,7 @@ vim.opt.listchars = 'tab:^ ,nbsp:¬,extends:»,precedes:«,trail:•'
 vim.filetype.add({
   extension = {
     circom = "circom",
+    tf = "terraform",
     sage = "python",
     sagews = "python",
     spyx = "python",
